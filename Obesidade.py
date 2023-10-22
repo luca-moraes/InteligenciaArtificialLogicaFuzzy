@@ -3,6 +3,11 @@ import numpy as np
 import skfuzzy as fuzz
 import matplotlib.pyplot as plt
 from skfuzzy import control as ctrl
+import os 
+
+folder = './imagens/'
+
+#os.makedirs(output_directory, exist_ok=True)
 
 #Variaveis de Entrada (Antecedent)
 
@@ -44,8 +49,13 @@ obesidade.automf(names=['baixa','media','alta'])
 
 #altura.view()
 atividadeFisica.view()
+plt.savefig(os.path.join(folder, 'atividade_fisica_automatico.png'))
+
 ingestaoAcucar.view()
+plt.savefig(os.path.join(folder, 'ingestao_acucar_automatico.png'))
+
 obesidade.view()
+plt.savefig(os.path.join(folder, 'obesidade_automatico.png'))
 
 #Criando as regras
 
@@ -59,23 +69,32 @@ controlador = ctrl.ControlSystem([regra1,regra2,regra3,regra4,regra5])
 
 #Simulando
 
-CalculoGorjeta = ctrl.ControlSystemSimulation(controlador)
+CalculoObesidade = ctrl.ControlSystemSimulation(controlador)
 
 #Input
 
 atvFisica = int(input('Qntd. de atividade Fisica: '))
 ingAcucar = int(input('Qnts. de consumo de acucar: '))
 
-CalculoGorjeta.input['atividadeFisica'] = atvFisica
-CalculoGorjeta.input['ingestaoAcucar'] = ingAcucar
-CalculoGorjeta.compute()
+CalculoObesidade.input['atividadeFisica'] = atvFisica
+CalculoObesidade.input['ingestaoAcucar'] = ingAcucar
+CalculoObesidade.compute()
 
-valorGorjeta = CalculoGorjeta.output['obesidade']
+valorObesidade = CalculoObesidade.output['obesidade']
 
-print("\nQualidade %d \nServiço %d \nGorjeta de %5.2f" %(atvFisica, ingAcucar,valorGorjeta))
+print("\nQualidade %d \nServiço %d \nGorjeta de %5.2f" %(atvFisica, ingAcucar,valorObesidade))
 
-ingestaoAcucar.view(sim=CalculoGorjeta)
-atividadeFisica.view(sim=CalculoGorjeta)
-obesidade.view(sim=CalculoGorjeta)
+#Salvando as imagens
+
+ingestaoAcucar.view(sim=CalculoObesidade)
+plt.savefig(os.path.join(folder, 'ingestao_acucar_regras.png'))
+
+atividadeFisica.view(sim=CalculoObesidade)
+plt.savefig(os.path.join(folder, 'atividade_fisica_regras.png'))
+
+obesidade.view(sim=CalculoObesidade)
+plt.savefig(os.path.join(folder, 'obesidade_regras.png'))
+
+#exibir no terminal
 
 plt.show()
